@@ -2,7 +2,7 @@ import { Game, GameAction, Typo, Word } from "./types";
 import React  from "react"
 import { useSessionContext } from "./SessionProvider";
 
-export const defaultState = {
+export const defaultState : Game = {
     words: [] as Word[],
     status: 'Loading',
     currentWordIndex: 0,
@@ -20,18 +20,25 @@ export const defaultState = {
 
 export function useGame() : GameState{
 
-  const [state, dispatch] = React.useReducer(gameReducer, defaultState);
+  const [state, dispatch]  = React.useReducer(gameReducer, defaultState);
+
+  const [preloadedwords, setPreloadedWords] = React.useState([] as string[]);
 
   const session = useSessionContext()
 
   const activeWord = state?.words[state.currentWordIndex]?.value
 
-  async function fetchWords() {
+  async function getWords() {
     const response = await window.fetch(
       "https://random-word-api.herokuapp.com/word?number=100"
     );
     const data = await response.json();
-    dispatch({type: 'START_NEW_GAME', words: data})
+    return data
+  }
+
+  async function fetchInitialWords() {
+    const words = await getWords()
+    dispatch({type: 'START_NEW_GAME', words})
   }
 
 
@@ -39,7 +46,7 @@ export function useGame() : GameState{
   React.useEffect(() => {
     let interval: number | null = null;
     if(state.status === 'Loading') {
-      fetchWords()
+      fetchInitialWords()
     }
     if(state.status === 'Active') {
       interval = window.setInterval(() => {
@@ -66,7 +73,7 @@ export function useGame() : GameState{
     else {
       const partialMatch = formattedValue === lowerCasedWord.substring(0, formattedValue.length)
       if(partialMatch){
-        dispatch({type: 'UPDATE_INPUT_VALUE', value: value})
+        dispatch({type: 'UPDATE_INPUT_VALUE', inputValue: value})
       }
       else {
         dispatch({type: "ADD_TYPO", typo: value})
@@ -74,17 +81,23 @@ export function useGame() : GameState{
     }
   }
 
+  async function playAgain(){
+    dispatch({type: "START_NEW_GAME", words: preloadedwords})
+  }
+
   async function endGame(){
     dispatch({type: 'END_GAME'});
     session.recordGame(state)
+    const words = await getWords()
+    setPreloadedWords(words)
   }
 
-  return {...state, handleInputChange, activeWord, playAgain: fetchWords, endGame}
+  return {...state, handleInputChange, activeWord, playAgain, endGame}
 
 }
 
 
-function gameReducer(state: Game, action: GameAction) {
+const gameReducer = (state: Game, action: GameAction) : Game => {
   switch (action.type) {
     case "START_NEW_GAME":
     const asWords = action.words.map(w => ({value: w, completed: false}))
@@ -92,7 +105,6 @@ function gameReducer(state: Game, action: GameAction) {
         ...state,
         status: 'Active',
         words: asWords,
-        completedWords: [],
         currentWordIndex: 0,
         typos: [],
         inputValue: '',
@@ -102,10 +114,12 @@ function gameReducer(state: Game, action: GameAction) {
     case "END_GAME": {
       return {
         ...state,
+        currentWordIndex: 0,
         inputValue: '',
         status: 'Over'
       }
     }
+
 
     case "ADD_TYPO":
       const currentWord = state.words[state.currentWordIndex]
@@ -121,11 +135,12 @@ function gameReducer(state: Game, action: GameAction) {
 
     case "MOVE_TO_NEXT_WORD":
       const newWords = [...state.words]
+      const newCurrentWordIndex = state.currentWordIndex + 1
       newWords[state.currentWordIndex].completed = true
       return {
         ...state,
         words: newWords,
-        currentWordIndex: state.currentWordIndex++,
+        currentWordIndex: newCurrentWordIndex,
         inputValue: '',
       };
   
@@ -141,6 +156,6 @@ function gameReducer(state: Game, action: GameAction) {
         time: state.time++
       }
     default: 
-      throw new Error(`Invalid Action Type ${action.type}`);
+      throw new Error(`Invalid Action Type`);
   }
 }

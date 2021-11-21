@@ -1,8 +1,8 @@
 import React from "react"
 import { useGame } from "./useGame"
 export function GameBoard(){
-  const {status, inputValue, handleInputChange, words, activeWord, playAgain, endGame, time } = useGame()
-  const wordsSpelled = words.filter(w => w.completed)
+  const {status, inputValue, handleInputChange, words, activeWord, playAgain, endGame, time, currentWordIndex } = useGame()
+  const wordsSpelled = words.filter(w => !!w.completed)
   const wpm = wordsSpelled.length ? ((wordsSpelled.length / time) * 60).toFixed(2) : 0
   if(status === 'Active') return (
     <div className="flex flex-col space-y-4 items-center justify-center">
@@ -21,6 +21,8 @@ export function GameBoard(){
     </div>
     )
   }
-  else return null
+  else return <div >
+        Loading...  
+  </div>
  
 }

@@ -11,7 +11,7 @@ export interface Game {
   words: Array<Word> ;
   status: 'Loading' | 'Active' | 'Over';
   currentWordIndex: number;
-  typos: Array<Word>;
+  typos: Array<Typo>;
   inputValue: string;
   time: number;
 };
