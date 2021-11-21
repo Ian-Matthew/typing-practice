@@ -1,26 +1,27 @@
-import React from "react"
-import { Game } from "../types"
-export function useSession(){
+import React from "react";
+import { Game } from "../types";
+export function useSession() {
   const [session, setSession] = React.useState({
     games: [] as Game[],
-    isActive: false
-  })
+    isActive: false,
+  });
 
   function recordGame(game: Game) {
-    setSession({...session, games: [...session.games, game]})
+    setSession({ ...session, games: [...session.games, game] });
   }
 
-  function startSession(){
-    setSession({...session, isActive: true})
+  function startSession() {
+    setSession({ ...session, isActive: true });
   }
 
-  function endSession(){
-    setSession({...session, isActive: false})
+  function endSession() {
+    setSession({ ...session, isActive: false });
   }
 
   return {
-    ...session, startSession, endSession, recordGame
-  }
-
-  
+    ...session,
+    startSession,
+    endSession,
+    recordGame,
+  };
 }

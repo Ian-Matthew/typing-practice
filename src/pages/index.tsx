@@ -1,18 +1,17 @@
-import type { NextPage } from 'next'
+import type { NextPage } from "next";
 
-import React from 'react'
-import { SessionProvider } from '../session/SessionProvider'
-import StartScreen from '../StartScreen'
+import React from "react";
+import { SessionProvider } from "../session/SessionProvider";
+import StartScreen from "../StartScreen";
 
 const Home: NextPage = () => {
   return (
     <SessionProvider>
       <div className="flex flex-col items-center justify-center font-display min-h-screen">
-       <StartScreen/>
+        <StartScreen />
       </div>
     </SessionProvider>
-    
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

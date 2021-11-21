@@ -2,18 +2,16 @@ import React from "react";
 import { useSession } from "./useSession";
 import { Session } from "../types";
 
-
-
 const SessionContext = React.createContext<Session | undefined>(undefined);
 
 type SessionProviderProps = { children: React.ReactNode };
 
-function SessionProvider({
-  children,
-}: SessionProviderProps) {
- const session = useSession()
+function SessionProvider({ children }: SessionProviderProps) {
+  const session = useSession();
   return (
-    <SessionContext.Provider value={session}>{children}</SessionContext.Provider>
+    <SessionContext.Provider value={session}>
+      {children}
+    </SessionContext.Provider>
   );
 }
 
