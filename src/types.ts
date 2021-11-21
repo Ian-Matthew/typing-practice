@@ -30,7 +30,7 @@ export type Typo = {
 export type GameAction =
 | { type: "START_NEW_GAME"; words: string[] }
 | {type: "END_GAME"}
-| { type: "ADD_TYPO"; typo: string }
+| { type: "ADD_TYPO"; typo: string, value: string }
 | { type: "MOVE_TO_NEXT_WORD"}
 | { type: "UPDATE_INPUT_VALUE"; inputValue: string }
 | { type: "UPDATE_TIMER"}

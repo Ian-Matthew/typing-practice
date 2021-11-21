@@ -1,6 +1,6 @@
 import React from "react"
-import { GameBoard } from "./GameBoard";
-import { useSessionContext } from "./SessionProvider"
+import { GameBoard } from "./game/GameBoard";
+import { useSessionContext } from "./session/SessionProvider"
 
 export default function StartScreen(){
   const {isActive, startSession} = useSessionContext();

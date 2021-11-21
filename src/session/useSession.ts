@@ -1,5 +1,5 @@
 import React from "react"
-import { Game } from "./types"
+import { Game } from "../types"
 export function useSession(){
   const [session, setSession] = React.useState({
     games: [] as Game[],

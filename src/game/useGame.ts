@@ -1,6 +1,6 @@
-import { Game, GameAction, Typo, Word } from "./types";
+import { Game, GameAction, Typo, Word } from "../types";
 import React  from "react"
-import { useSessionContext } from "./SessionProvider";
+import { useSessionContext } from "../session/SessionProvider";
 
 export const defaultState : Game = {
     words: [] as Word[],
@@ -76,7 +76,7 @@ export function useGame() : GameState{
         dispatch({type: 'UPDATE_INPUT_VALUE', inputValue: value})
       }
       else {
-        dispatch({type: "ADD_TYPO", typo: value})
+        dispatch({type: "ADD_TYPO", typo: value, inputValue: value})
       }
     }
   }
@@ -91,6 +91,7 @@ export function useGame() : GameState{
     const words = await getWords()
     setPreloadedWords(words)
   }
+
 
   return {...state, handleInputChange, activeWord, playAgain, endGame}
 
@@ -129,7 +130,8 @@ const gameReducer = (state: Game, action: GameAction) : Game => {
       }
       return {
         ...state,
-        inputValue: '',
+        inputValue: action.typo,
+        // inputValue: '',
         typos: [...state.typos, typo]
       };
 
