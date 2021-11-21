@@ -26,6 +26,15 @@ function GameBoard(){
   const [wordsSpelled, setWordsSpelled] = React.useState([])
   const hasPlayed = React.useRef(false)
 
+  function resetGame(){
+    goToNextWord()
+    setWordsSpelled([])
+    setInputValue("")
+    reset()
+    toggle()
+    hasPlayed.current = false
+  }
+
   React.useEffect(()=> {
     if(isReady) {
       toggle()
@@ -55,6 +64,7 @@ function GameBoard(){
       setInputValue(value)
     }
   }
+  const WPM = wordsSpelled.length ? ((wordsSpelled.length / seconds) * 60).toFixed(2) : 0
   return (
     <div className="flex flex-col space-y-4 items-center justify-center">
       {isActive ? (
@@ -67,7 +77,8 @@ function GameBoard(){
       ) : (
         <>
           <div>Total Words: {wordsSpelled.length}</div>
-          <div>WPM {((wordsSpelled.length / seconds) * 60)}</div>
+          <div>WPM {WPM}</div>
+          <button onClick={() => resetGame()}>Play Again</button>
         </>
         
       )}
