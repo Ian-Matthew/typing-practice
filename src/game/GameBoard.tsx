@@ -1,66 +1,108 @@
 import React from "react";
-import { useGame } from "./useGame";
-
-function ActiveWord({ activeWord, inputValue }) {
-  if (inputValue) {
-    return (
-      <div className="active-word">
-        {[...activeWord].map((letter, index) => {
-          const inputLetter = [...inputValue][index];
-          console.log("inputLetter", inputLetter);
-          console.log("correct letter", letter);
-          const isCorrect = inputLetter === letter;
-          let className = isCorrect ? "text-green-500" : "text-red-500";
-          if (index > inputValue.length - 1) className = "text-black";
-          return <span className={className}>{letter}</span>;
-        })}
-      </div>
-    );
-  }
-  return <span>{activeWord}</span>;
-}
+import classNames from "classnames";
+import { GameProvider, useGameContext } from "./GameContext";
+import { getCompletedWords, getWordsPerMinute } from "./game-logic-helpers";
+import { Button } from "../Button";
 export function GameBoard() {
-  const {
-    status,
-    inputValue,
-    handleInputChange,
-    words,
-    activeWord,
-    playAgain,
-    endGame,
-    time,
-    currentWordIndex,
-    typos,
-  } = useGame();
+  return (
+    <GameProvider>
+      <Screen />
+    </GameProvider>
+  );
+}
 
-  const wordsSpelled = words.filter((w) => !!w.completed);
-  const wpm = wordsSpelled.length
-    ? ((wordsSpelled.length / time) * 60).toFixed(2)
-    : 0;
-  if (status === "Active")
-    return (
-      <div className="flex flex-col space-y-4 items-center justify-center">
-        <span className="text-5xl">
-          <ActiveWord activeWord={activeWord} inputValue={inputValue} />
-        </span>
-        <input
-          value={inputValue}
-          onChange={handleInputChange}
-          className="border text-2xl border-black px-3 py-2 text-center"
-          autoFocus
-          type="text"
-        />
-        <span>{time}</span>
-        <button onClick={() => endGame()}>End Practice</button>
-      </div>
-    );
-  if (status === "Over") {
-    return (
-      <div className="flex flex-col space-y-4 items-center justify-center">
-        <div>Total Words: {wordsSpelled.length}</div>
-        <div>WPM {wpm}</div>
-        <button onClick={playAgain}>Play Again</button>
-      </div>
-    );
-  } else return <div>Loading...</div>;
+function Screen(): JSX.Element | null {
+  const { status } = useGameContext();
+  if (status === "Loading") return <div>Loading...</div>;
+  if (status === "Active") return <ActiveGame />;
+  if (status === "Over") return <GameOver />;
+  return null;
+}
+
+function ActiveGame() {
+  const { endGame } = useGameContext();
+  return (
+    <div className="flex relative flex-col space-y-4 items-center justify-center">
+      <ScorePing />
+      <ActiveWord />
+      <Input />
+      <Timer />
+      <Button onClick={() => endGame()}>End Practice</Button>
+    </div>
+  );
+}
+
+function ScorePing() {
+  const { words } = useGameContext();
+  const wordsSpelled = getCompletedWords(words);
+  return wordsSpelled.length > 0 ? (
+    <div
+      key={wordsSpelled.length}
+      style={{ zIndex: -1 }}
+      className="absolute w-80 h-80 rounded-full opacity-0  bg-pink-50 animate-score"
+    ></div>
+  ) : null;
+}
+
+function GameOver() {
+  const { playAgain, words, time } = useGameContext();
+  const wordsSpelled = getCompletedWords(words);
+  const wpm = getWordsPerMinute(wordsSpelled, time);
+  return (
+    <>
+      <div>Total Words: {wordsSpelled.length}</div>
+      <div>WPM {wpm}</div>
+      <Button onClick={playAgain}>Play Again</Button>
+    </>
+  );
+}
+
+function ActiveWord() {
+  const { activeWord, inputValue, typos } = useGameContext();
+  return (
+    <div
+      key={typos.length}
+      className={classNames(
+        "text-4xl flex flex-row",
+        typos && typos.length && "animate-typo"
+      )}
+    >
+      {[...activeWord].map((letter, index) => {
+        const inputLetter = [...inputValue][index];
+        const isClean = index > inputValue.length - 1;
+        const isCorrect = !isClean && inputLetter === letter;
+        const isInCorrect = !isClean && inputLetter !== letter;
+        return (
+          <span
+            key={`letter-${letter}-${index}`}
+            className={classNames({
+              "text-[#76A08A]": isCorrect,
+              "text-[#D1362F]": isInCorrect,
+              "text-black": isClean,
+            })}
+          >
+            {letter}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function Input() {
+  const { inputValue, handleInputChange } = useGameContext();
+  return (
+    <input
+      value={inputValue}
+      onChange={handleInputChange}
+      className="border text-2xl transition-all border-black px-3 py-2 text-center focus:outline-none focus:ring focus:ring-black"
+      autoFocus
+      type="text"
+    />
+  );
+}
+
+function Timer() {
+  const { time } = useGameContext();
+  return <span>{time}</span>;
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { GameBoard } from "./game/GameBoard";
 import { useSessionContext } from "./session/SessionProvider";
-
+import { Button } from "./Button";
 export default function StartScreen() {
   const { isActive, startSession } = useSessionContext();
 
@@ -13,12 +13,7 @@ export default function StartScreen() {
         </div>
         <h1 className="text-3xl mt-5">Typing Practice</h1>
         <div className="space-x-5 mt-5 flex ">
-          <button
-            className="px-4 my-1 rounded-md border border-black text-center"
-            onClick={() => startSession()}
-          >
-            Start Practice
-          </button>
+          <Button onClick={() => startSession()}>Start Practice</Button>
         </div>
       </>
     );

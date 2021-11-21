@@ -1,4 +1,4 @@
-import { Game, GameAction, Typo, Word } from "../types";
+import { Game, GameState, GameAction, Typo, Word } from "../types";
 import React from "react";
 import { useSessionContext } from "../session/SessionProvider";
 
@@ -11,13 +11,6 @@ export const defaultState: Game = {
   time: 0,
 };
 
-export interface GameState extends Game {
-  activeWord: string;
-  playAgain: () => void;
-  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  endGame: () => void;
-}
-
 export function useGame(): GameState {
   const [state, dispatch] = React.useReducer(gameReducer, defaultState);
 
@@ -26,14 +19,6 @@ export function useGame(): GameState {
   const session = useSessionContext();
 
   const activeWord = state?.words[state.currentWordIndex]?.value;
-
-  async function getWords() {
-    const response = await window.fetch(
-      "https://random-word-api.herokuapp.com/word?number=100"
-    );
-    const data = await response.json();
-    return data;
-  }
 
   async function fetchInitialWords() {
     const words = await getWords();
@@ -91,6 +76,13 @@ export function useGame(): GameState {
   return { ...state, handleInputChange, activeWord, playAgain, endGame };
 }
 
+async function getWords() {
+  const response = await window.fetch(
+    "https://random-word-api.herokuapp.com/word?number=100"
+  );
+  const data = await response.json();
+  return data;
+}
 const gameReducer = (state: Game, action: GameAction): Game => {
   switch (action.type) {
     case "START_NEW_GAME":

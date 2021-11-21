@@ -7,7 +7,7 @@ import StartScreen from "../StartScreen";
 const Home: NextPage = () => {
   return (
     <SessionProvider>
-      <div className="flex flex-col items-center justify-center font-display min-h-screen">
+      <div className="flex flex-col items-center justify-center font-fancy min-h-screen">
         <StartScreen />
       </div>
     </SessionProvider>

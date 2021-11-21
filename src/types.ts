@@ -15,6 +15,13 @@ export interface Game {
   time: number;
 }
 
+export interface GameState extends Game {
+  activeWord: string;
+  playAgain: () => void;
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  endGame: () => void;
+}
+
 export interface Word {
   value: string;
   completed: boolean;
