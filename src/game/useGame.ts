@@ -31,6 +31,9 @@ export function useGame(): GameState {
     if (state.status === "Loading") {
       fetchInitialWords();
     }
+    if (state.status === "Over") {
+      session.recordGame(state);
+    }
     if (state.status === "Active") {
       interval = window.setInterval(() => {
         dispatch({ type: "UPDATE_TIMER" });
@@ -68,7 +71,6 @@ export function useGame(): GameState {
 
   async function endGame() {
     dispatch({ type: "END_GAME" });
-    session.recordGame(state);
     const words = await getWords();
     setPreloadedWords(words);
   }
@@ -112,11 +114,17 @@ const gameReducer = (state: Game, action: GameAction): Game => {
         value: action.typo,
         expected: currentWord.value,
       };
+      if (!state.typos.find((t) => t.value === action.typo)) {
+        return {
+          ...state,
+          inputValue: action.typo,
+          // inputValue: '',
+          typos: [...state.typos, typo],
+        };
+      }
       return {
         ...state,
         inputValue: action.typo,
-        // inputValue: '',
-        typos: [...state.typos, typo],
       };
 
     case "MOVE_TO_NEXT_WORD":
