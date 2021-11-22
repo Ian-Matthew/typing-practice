@@ -33,7 +33,7 @@ function ActiveGame() {
 }
 
 function clampPing(activeWordLength: number) {
-  const value = activeWordLength * 15;
+  const value = activeWordLength * 25;
   const low = 176;
   const high = Math.min(value, 320);
   return Math.max(low, high);
