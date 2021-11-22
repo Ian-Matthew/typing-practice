@@ -32,7 +32,7 @@ export function ActiveGameStats() {
   );
   return (
     <div className="flex font-display mx-auto flex-row items-center divide-x divide-black">
-      <StatItem label="Time" value={time} />
+      <StatItem label="Time" value={`${time}s`} />
       <StatItem label="Words Typed" value={completedWords.length} />
       <StatItem label="WPM" value={WPM} />
       <StatItem label="Typos" value={typos.length} />

@@ -5,11 +5,14 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display: ["Jost"],
-        fancy: ["Cutiv"],
+        // display: ["Jost"],
+        display: ["Helvetica", "sans-serif"],
+        fancy: ["Garamond", "serif"],
+        // fancy: ["Cutiv"],
       },
       animation: {
         score: "score .6s ease-in-out",
+        "score-perfect": "score .4s ease-in-out .1s",
         typo: "shake .7s cubic-bezier(.36,.07,.19,.97) both",
       },
       keyframes: {

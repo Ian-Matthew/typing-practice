@@ -32,6 +32,7 @@ export function useSession() {
     setSession({
       games: [] as Game[],
     });
+    setIsActive(false);
   }
 
   function getAggregateStats() {
