@@ -6,15 +6,20 @@ import { useSessionContext } from "./session/SessionProvider";
 import React from "react";
 import { useGameContext } from "./game/GameContext";
 export function SessionStats({}) {
-  const { getAggregateStats } = useSessionContext();
+  const { getAggregateStats, resetSession } = useSessionContext();
   const stats = getAggregateStats();
   return (
-    <div className="flex font-display mx-auto flex-row items-center divide-x divide-black">
-      <StatItem label="Total Games Played" value={stats.gamesPlayed} />
-      <StatItem label="Total Words Typed" value={stats.words.length} />
-      <StatItem label="Total WPM" value={stats.wpm} />
-      <StatItem label="Total Typos" value={stats.typos.length} />
-    </div>
+    <>
+      <div className="flex font-display mx-auto flex-row items-center divide-x divide-black">
+        <StatItem label="Total Games Played" value={stats.gamesPlayed} />
+        <StatItem label="Total Words Typed" value={stats.words.length} />
+        <StatItem label="Total WPM" value={stats.wpm} />
+        <StatItem label="Total Typos" value={stats.typos.length} />
+        <button className="font-semibold px-3" onClick={() => resetSession()}>
+          Reset Data
+        </button>
+      </div>
+    </>
   );
 }
 

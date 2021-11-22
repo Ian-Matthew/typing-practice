@@ -122,12 +122,13 @@ const gameReducer = (state: Game, action: GameAction): Game => {
         return {
           ...state,
           inputValue: action.typo,
-          // inputValue: '',
+          status: "Active",
           typos: [...state.typos, typo],
         };
       }
       return {
         ...state,
+        status: "Active",
         inputValue: action.typo,
       };
 

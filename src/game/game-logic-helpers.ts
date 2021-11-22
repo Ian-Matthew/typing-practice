@@ -1,5 +1,5 @@
 import { Word, Typo } from "../types";
-
+import compliments from "../compliments.json";
 export function getCompletedWords(words: Word[]): Word[] {
   return words.filter((w) => w.completed);
 }
@@ -24,4 +24,10 @@ export function getWordsPerMinute(words: Word[], time: number) {
   return completedWords.length === 0
     ? 0
     : ((completedWords.length / time) * 60).toFixed(2);
+}
+
+export function getCompliment() {
+  const compliment =
+    compliments[Math.floor(Math.random() * compliments.length)];
+  return compliment;
 }

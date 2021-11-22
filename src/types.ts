@@ -5,6 +5,7 @@ export interface Session {
   startSession: () => void;
   endSession: () => void;
   getAggregateStats: () => SessionStats;
+  resetSession: () => void;
 }
 
 export interface SessionStats extends Stats {

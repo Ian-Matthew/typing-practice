@@ -2,15 +2,15 @@ import React from "react";
 import { GameBoard } from "./game/GameBoard";
 import { Button } from "./Button";
 import { useGameContext } from "./game/GameContext";
-import { SessionStats } from "./Stats";
+import { useSessionContext } from "./session/SessionProvider";
 export default function StartScreen() {
   const { preloadWords, playAgain } = useGameContext();
-  const [isPlaying, setIsPlaying] = React.useState(false);
+  const { startSession, isActive, endSession } = useSessionContext();
 
   React.useEffect(() => {
     preloadWords();
   }, []);
-  if (!isPlaying)
+  if (!isActive)
     return (
       <>
         <div className="w-80 p-5">
@@ -20,7 +20,7 @@ export default function StartScreen() {
         <div className="space-x-5 mt-5 flex ">
           <Button
             onClick={() => {
-              setIsPlaying(true);
+              startSession();
               playAgain();
             }}
           >

@@ -1,13 +1,10 @@
 import React from "react";
 import classNames from "classnames";
-import { GameProvider, useGameContext } from "./GameContext";
-import {
-  getAccuracy,
-  getCompletedWords,
-  getWordsPerMinute,
-} from "./game-logic-helpers";
+import { useGameContext } from "./GameContext";
+import { getCompletedWords, getCompliment } from "./game-logic-helpers";
 import { Button } from "../Button";
 import { ActiveGameStats } from "../Stats";
+import { useSessionContext } from "../session/SessionProvider";
 
 export function GameBoard(): JSX.Element | null {
   const { status } = useGameContext();
@@ -19,6 +16,7 @@ export function GameBoard(): JSX.Element | null {
 
 function ActiveGame() {
   const { endGame, status } = useGameContext();
+  const { endSession } = useSessionContext();
   return (
     <div className="flex relative flex-col space-y-4 items-center justify-center">
       <ScorePing />
@@ -28,7 +26,13 @@ function ActiveGame() {
         {status === "Ready" && <GameDescription />}
         {status === "Active" && <ActiveGameStats />}
       </div>
-      <Button onClick={() => endGame()}>End Practice</Button>
+      <Button
+        onClick={() => {
+          return status === "Active" ? endGame() : endSession();
+        }}
+      >
+        {status === "Active" ? "End Game" : "Cancel"}
+      </Button>
     </div>
   );
 }
@@ -43,6 +47,7 @@ function clampPing(activeWordLength: number) {
 function ScorePing() {
   const { words } = useGameContext();
   const wordsSpelled = getCompletedWords(words);
+
   return wordsSpelled.length > 0 ? (
     <div
       key={wordsSpelled.length}
@@ -57,12 +62,12 @@ function ScorePing() {
 }
 
 function GameOver() {
-  const { playAgain, words, time } = useGameContext();
-  const wordsSpelled = getCompletedWords(words);
-  const wpm = getWordsPerMinute(wordsSpelled, time);
+  const { playAgain } = useGameContext();
+  const compliment = React.useRef(getCompliment());
   return (
     <div className="flex flex-col space-y-5 items-center justify-center">
       <div className="text-5xl font-medium">Session Results</div>
+      <blockquote>{compliment.current}</blockquote>
       <ActiveGameStats />
       <Button onClick={playAgain}>Play Again</Button>
     </div>

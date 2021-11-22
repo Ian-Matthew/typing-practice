@@ -8,6 +8,11 @@ type SessionProviderProps = { children: React.ReactNode };
 
 function SessionProvider({ children }: SessionProviderProps) {
   const session = useSession();
+  console.log("sess", session);
+  // Always end session on cleanup, so user sees splash screen on next visit
+  React.useEffect(() => {
+    return () => session.endSession();
+  }, []);
   return (
     <SessionContext.Provider value={session}>
       {children}

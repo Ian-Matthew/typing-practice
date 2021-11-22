@@ -9,21 +9,29 @@ export function useSession() {
   const [session, setSession] = useLocalStorageState(
     {
       games: [] as Game[],
-      isActive: false,
     },
     "typing-session"
   );
+
+  const [isActive, setIsActive] = React.useState(false);
 
   function recordGame(game: Game) {
     setSession({ ...session, games: [...session.games, game] });
   }
 
   function startSession() {
-    setSession({ ...session, isActive: true });
+    console.log("starting....");
+    setIsActive(true);
   }
 
   function endSession() {
-    setSession({ ...session, isActive: false });
+    setIsActive(false);
+  }
+
+  function resetSession() {
+    setSession({
+      games: [] as Game[],
+    });
   }
 
   function getAggregateStats() {
@@ -49,13 +57,13 @@ export function useSession() {
     };
   }
 
-  console.log("agg stats", getAggregateStats());
-
   return {
     ...session,
     startSession,
     endSession,
+    resetSession,
     recordGame,
+    isActive,
     getAggregateStats,
   };
 }
