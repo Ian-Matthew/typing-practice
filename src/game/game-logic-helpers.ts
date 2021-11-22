@@ -1,4 +1,4 @@
-import { Word } from "../types";
+import { Word, Typo } from "../types";
 
 export function getCompletedWords(words: Word[]): Word[] {
   return words.filter((w) => w.completed);

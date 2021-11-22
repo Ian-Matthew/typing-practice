@@ -1,32 +1,33 @@
 import React from "react";
 import classNames from "classnames";
 import { GameProvider, useGameContext } from "./GameContext";
-import { getCompletedWords, getWordsPerMinute } from "./game-logic-helpers";
+import {
+  getAccuracy,
+  getCompletedWords,
+  getWordsPerMinute,
+} from "./game-logic-helpers";
 import { Button } from "../Button";
-export function GameBoard() {
-  return (
-    <GameProvider>
-      <Screen />
-    </GameProvider>
-  );
-}
+import { ActiveGameStats } from "../Stats";
 
-function Screen(): JSX.Element | null {
+export function GameBoard(): JSX.Element | null {
   const { status } = useGameContext();
   if (status === "Loading") return <div>Loading...</div>;
-  if (status === "Active") return <ActiveGame />;
+  if (status === "Active" || status === "Ready") return <ActiveGame />;
   if (status === "Over") return <GameOver />;
   return null;
 }
 
 function ActiveGame() {
-  const { endGame } = useGameContext();
+  const { endGame, status } = useGameContext();
   return (
     <div className="flex relative flex-col space-y-4 items-center justify-center">
       <ScorePing />
       <ActiveWord />
       <Input />
-      <Timer />
+      <div className="max-w-prose mx-auto text-center h-12 flex items-center justify-center">
+        {status === "Ready" && <GameDescription />}
+        {status === "Active" && <ActiveGameStats />}
+      </div>
       <Button onClick={() => endGame()}>End Practice</Button>
     </div>
   );
@@ -60,11 +61,11 @@ function GameOver() {
   const wordsSpelled = getCompletedWords(words);
   const wpm = getWordsPerMinute(wordsSpelled, time);
   return (
-    <>
-      <div>Total Words: {wordsSpelled.length}</div>
-      <div>WPM {wpm}</div>
+    <div className="flex flex-col space-y-5 items-center justify-center">
+      <div className="text-5xl font-medium">Session Results</div>
+      <ActiveGameStats />
       <Button onClick={playAgain}>Play Again</Button>
-    </>
+    </div>
   );
 }
 
@@ -149,7 +150,11 @@ function Input() {
   );
 }
 
-function Timer() {
-  const { time } = useGameContext();
-  return <span>{time}</span>;
+function GameDescription() {
+  return (
+    <>
+      Start typing the word above to initiate the practice session. Once you
+      enter all letters correctly, a new word will be shown.
+    </>
+  );
 }

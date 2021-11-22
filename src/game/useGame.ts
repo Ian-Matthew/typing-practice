@@ -1,10 +1,11 @@
 import { Game, GameState, GameAction, Typo, Word } from "../types";
 import React from "react";
 import { useSessionContext } from "../session/SessionProvider";
+import { getCompletedWords, getWordsPerMinute } from "./game-logic-helpers";
 
 export const defaultState: Game = {
   words: [] as Word[],
-  status: "Loading",
+  status: "Ready",
   currentWordIndex: 0,
   typos: [] as Typo[],
   inputValue: "",
@@ -14,25 +15,18 @@ export const defaultState: Game = {
 export function useGame(): GameState {
   const [state, dispatch] = React.useReducer(gameReducer, defaultState);
 
-  const [preloadedwords, setPreloadedWords] = React.useState([] as string[]);
-
+  const [preLoadedWords, setPreLoadedWords] = React.useState<string[]>([]);
   const session = useSessionContext();
 
   const activeWord = state?.words[state.currentWordIndex]?.value;
 
-  async function fetchInitialWords() {
-    const words = await getWords();
-    dispatch({ type: "START_NEW_GAME", words });
-  }
-
   // Handle statuses ... loading and timer...
   React.useEffect(() => {
     let interval: number | null = null;
-    if (state.status === "Loading") {
-      fetchInitialWords();
-    }
+
     if (state.status === "Over") {
       session.recordGame(state);
+      preloadWords();
     }
     if (state.status === "Active") {
       interval = window.setInterval(() => {
@@ -66,16 +60,25 @@ export function useGame(): GameState {
   }
 
   async function playAgain() {
-    dispatch({ type: "START_NEW_GAME", words: preloadedwords });
+    dispatch({ type: "START_NEW_GAME", words: preLoadedWords });
   }
 
   async function endGame() {
     dispatch({ type: "END_GAME" });
-    const words = await getWords();
-    setPreloadedWords(words);
   }
 
-  return { ...state, handleInputChange, activeWord, playAgain, endGame };
+  function preloadWords() {
+    getWords().then((words) => setPreLoadedWords(words));
+  }
+
+  return {
+    ...state,
+    handleInputChange,
+    activeWord,
+    playAgain,
+    endGame,
+    preloadWords,
+  };
 }
 
 async function getWords() {
@@ -89,10 +92,11 @@ const gameReducer = (state: Game, action: GameAction): Game => {
   switch (action.type) {
     case "START_NEW_GAME":
       const asWords = action.words.map((w) => ({ value: w, completed: false }));
+
       return {
         ...state,
-        status: "Active",
         words: asWords,
+        status: "Ready",
         currentWordIndex: 0,
         typos: [],
         inputValue: "",
@@ -141,6 +145,7 @@ const gameReducer = (state: Game, action: GameAction): Game => {
     case "UPDATE_INPUT_VALUE":
       return {
         ...state,
+        status: "Active",
         inputValue: action.inputValue,
       };
     case "UPDATE_TIMER":

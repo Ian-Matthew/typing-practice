@@ -4,11 +4,23 @@ export interface Session {
   recordGame: (game: Game) => void;
   startSession: () => void;
   endSession: () => void;
+  getAggregateStats: () => SessionStats;
+}
+
+export interface SessionStats extends Stats {
+  gamesPlayed: number;
+}
+
+export interface Stats {
+  wpm: number;
+  time: number;
+  words: Word[];
+  typos: Typo[];
 }
 
 export interface Game {
   words: Array<Word>;
-  status: "Loading" | "Active" | "Over";
+  status: "Ready" | "Loading" | "Active" | "Over";
   currentWordIndex: number;
   typos: Array<Typo>;
   inputValue: string;
@@ -20,6 +32,7 @@ export interface GameState extends Game {
   playAgain: () => void;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   endGame: () => void;
+  preloadWords: () => void;
 }
 
 export interface Word {
@@ -33,12 +46,14 @@ export type Typo = {
 };
 
 export type GameAction =
-  | { type: "START_NEW_GAME"; words: string[] }
+  | { type: "READY_NEW_GAME"; words: string[] }
   | { type: "END_GAME" }
   | { type: "ADD_TYPO"; typo: string; value: string }
   | { type: "MOVE_TO_NEXT_WORD" }
   | { type: "UPDATE_INPUT_VALUE"; inputValue: string }
-  | { type: "UPDATE_TIMER" };
+  | { type: "UPDATE_TIMER" }
+  | { type: "START_NEW_GAME"; words: string[] }
+  | { type: "PRELOAD_WORDS"; words: string[] };
 
 export interface ContextType extends Game {
   dispatch: Dispatch;
