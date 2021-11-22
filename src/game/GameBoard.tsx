@@ -32,14 +32,25 @@ function ActiveGame() {
   );
 }
 
+function clampPing(activeWordLength: number) {
+  const value = activeWordLength * 15;
+  const low = 176;
+  const high = Math.min(value, 320);
+  return Math.max(low, high);
+}
+
 function ScorePing() {
   const { words } = useGameContext();
   const wordsSpelled = getCompletedWords(words);
   return wordsSpelled.length > 0 ? (
     <div
       key={wordsSpelled.length}
-      style={{ zIndex: -1 }}
-      className="absolute w-80 h-80 rounded-full opacity-0  bg-pink-50 animate-score"
+      style={{
+        zIndex: -1,
+        width: clampPing(wordsSpelled[wordsSpelled.length - 1].value.length),
+        height: clampPing(wordsSpelled[wordsSpelled.length - 1].value.length),
+      }}
+      className="absolute w-80 h-44 rounded-full opacity-0  bg-[#FCD16B] bg-opacity-20 animate-score"
     ></div>
   ) : null;
 }
@@ -58,33 +69,69 @@ function GameOver() {
 }
 
 function ActiveWord() {
-  const { activeWord, inputValue, typos } = useGameContext();
+  const { currentWordIndex, words, inputValue, typos } = useGameContext();
   return (
-    <div
-      key={typos.length}
-      className={classNames(
-        "text-4xl flex flex-row",
-        typos && typos.length && "animate-typo"
-      )}
-    >
-      {[...activeWord].map((letter, index) => {
-        const inputLetter = [...inputValue][index];
-        const isClean = index > inputValue.length - 1;
-        const isCorrect = !isClean && inputLetter === letter;
-        const isInCorrect = !isClean && inputLetter !== letter;
-        return (
-          <span
-            key={`letter-${letter}-${index}`}
-            className={classNames({
-              "text-[#76A08A]": isCorrect,
-              "text-[#D1362F]": isInCorrect,
-              "text-black": isClean,
-            })}
-          >
-            {letter}
-          </span>
-        );
-      })}
+    // Wrapper to only show the active word
+    <div className="relative overflow-hidden h-12  w-full">
+      {/* Vertical track of all words */}
+
+      <div
+        className={classNames(
+          "flex absolute w-full top-0 flex-col items-center justify-center transition-transform"
+        )}
+        // Moves the track to be positioned over the active word
+        style={{ transform: `translateY(${currentWordIndex * -3}rem)` }}
+      >
+        {/* Map thru each word, if the active word apply the character by character colors and typo animation
+        ......otherwise we can just show the word */}
+        {words.map((word, index) => {
+          const isCurrentWord = index === currentWordIndex;
+          return (
+            <div
+              key={`word-${word.value}`}
+              className={classNames(
+                "w-full text-4xl text-center py-1 h-12 transition-all transform scale-100",
+                index < currentWordIndex && "text-[#76A08A] "
+              )}
+            >
+              {isCurrentWord ? (
+                <div
+                  key={typos.length}
+                  className={classNames(
+                    typos &&
+                      typos.length &&
+                      typos[typos.length - 1]?.expected === word.value &&
+                      "animate-typo"
+                  )}
+                >
+                  {[...word.value].map((letter, index) => {
+                    const inputLetter = [...inputValue][index];
+                    const isClean = index > inputValue.length - 1;
+                    const isCorrect =
+                      (!isClean && inputLetter === letter) ||
+                      word.value === inputValue;
+                    const isInCorrect = !isClean && inputLetter !== letter;
+                    return (
+                      <span
+                        key={`letter-${letter}-${index}`}
+                        className={classNames({
+                          "text-[#76A08A]": isCorrect,
+                          "text-[#D1362F]": isInCorrect,
+                          "text-black": isClean,
+                        })}
+                      >
+                        {letter}
+                      </span>
+                    );
+                  })}
+                </div>
+              ) : (
+                <span>{word.value}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
