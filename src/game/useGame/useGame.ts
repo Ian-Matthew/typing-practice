@@ -2,14 +2,13 @@ import React from "react";
 import { useSession } from "../../session/useSession";
 import { Game, GameAction, GameContext, Word, Typo } from "../types";
 import { getWords } from "./fetchWords";
-
+import { useTimer } from "./useTimer";
 export const defaultState: Game = {
   words: [] as Word[],
   status: "Ready",
   activeWordIndex: 0,
   typos: [] as Typo[],
   inputValue: "",
-  time: 0,
 };
 
 export function gameReducer(state: Game, action: GameAction): Game {
@@ -22,7 +21,6 @@ export function gameReducer(state: Game, action: GameAction): Game {
         activeWordIndex: 0,
         typos: [],
         inputValue: "",
-        time: 0,
       };
 
     case "END_GAME": {
@@ -46,7 +44,6 @@ export function gameReducer(state: Game, action: GameAction): Game {
       if (isFullMatch) {
         words[state.activeWordIndex].completed = true;
       }
-      console.log("isFull", isFullMatch);
       // Do we need to record a typo? (unique typos only for now)
       const isTypo =
         !isPartialMatch && !state.typos.find((t) => t.value === inputValue);
@@ -63,11 +60,6 @@ export function gameReducer(state: Game, action: GameAction): Game {
         words,
       };
 
-    case "UPDATE_TIMER":
-      return {
-        ...state,
-        time: state.time++,
-      };
     default:
       throw new Error(`Invalid Action Type`);
   }
@@ -80,6 +72,8 @@ export function useGame(): GameContext {
   // We can optimistically fetch the next set of words, so we start the "next" game instantly
   const [preLoadedWords, setPreLoadedWords] = React.useState<Word[]>([]);
 
+  const timer = useTimer({ pauseOffScreen: false });
+
   // Method passed to the games input
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     dispatch({
@@ -90,10 +84,14 @@ export function useGame(): GameContext {
 
   // Optimistically prepare the "next" game by using the preloaded words if we have them, and fetching them if we dont
   async function readyNewGame() {
+    // reset timer
+    timer.reset();
+    // grab next words
     let words = preLoadedWords;
     if (words.length === 0) {
       words = await getWords();
     }
+
     dispatch({ type: "READY_NEW_GAME", words });
   }
 
@@ -104,13 +102,19 @@ export function useGame(): GameContext {
   // Method to call when a game ends
   async function endGame() {
     // 1. Capture a snapshot of the game state
-    const finishedGame = Object.freeze({ ...state });
+    // 4. Record the snapshoted game into the users session
+    const finishedGame = JSON.parse(
+      JSON.stringify({
+        words: completedWords,
+        typos: state.typos,
+        time: timer.time,
+      })
+    );
+    session.recordGame(finishedGame);
     // 2. End the game
     dispatch({ type: "END_GAME" });
     // 3. Optimistically Fetch words for the next round
     getWords().then((words) => setPreLoadedWords(words));
-    // 4. Record the snapshoted game into the users session
-    session.recordGame(finishedGame);
   }
 
   const activeWord = React.useMemo(
@@ -119,7 +123,16 @@ export function useGame(): GameContext {
   );
 
   const completedWords = state.words.filter((w) => w.completed);
-  console.log("worrdd", completedWords);
+
+  // increment timer every second while active
+  React.useEffect(() => {
+    if (state.status === "Active") {
+      timer.play();
+    }
+    if (state.status === "Over" || state.status === "Paused") {
+      timer.pause();
+    }
+  }, [state.status]);
 
   return {
     ...state,
@@ -129,5 +142,6 @@ export function useGame(): GameContext {
     activeWord,
     completedWords,
     preloadWords,
+    time: timer.time,
   };
 }

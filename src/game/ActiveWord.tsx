@@ -47,7 +47,6 @@ function AnimatedWords() {
 
 function Word() {
   const { inputValue, typos, activeWord } = useGameContext();
-  console.log("typos", typos);
   return (
     <div
       key={typos.length}

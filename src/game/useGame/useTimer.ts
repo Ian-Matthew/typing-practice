@@ -1,5 +1,6 @@
 import React from "react";
 import { usePageVisibility } from "../../utils/useBrowserVisible";
+import { useGameContext } from "./GameContext";
 export function useTimer({
   pauseOffScreen = true,
 }: {
@@ -11,11 +12,14 @@ export function useTimer({
   const isVisible = usePageVisibility();
 
   // Handle pausing offscreen if needed
+  // TODO: need to refactor these timers
   React.useEffect(() => {
     if (pauseOffScreen) {
-      setIsActive(isVisible);
+      if (!isVisible) {
+        setIsActive(false);
+      }
     }
-  }, [isVisible, pauseOffScreen]);
+  }, [isVisible]);
 
   React.useEffect(() => {
     let interval: number | null = null;
@@ -40,4 +44,18 @@ export function useTimer({
     setTime(0);
   }
   return { time, pause, play, reset };
+}
+
+export function useGameTimer() {
+  const { status } = useGameContext();
+  const timer = useTimer({ pauseOffScreen: true });
+  React.useEffect(() => {
+    if (status === "Active") {
+      timer.play();
+    } else {
+      timer.pause();
+    }
+  }, [status]);
+
+  return timer;
 }

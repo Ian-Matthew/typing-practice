@@ -23,6 +23,7 @@ export function getBrowserDocumentHiddenProp() {
 }
 
 export function getIsDocumentHidden() {
+  if (typeof window === "undefined") return true;
   return !document[getBrowserDocumentHiddenProp()];
 }
 

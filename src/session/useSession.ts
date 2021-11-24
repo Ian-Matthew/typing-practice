@@ -20,7 +20,6 @@ export function useSession() {
   }
 
   function startSession() {
-    console.log("starting....");
     setIsActive(true);
   }
 

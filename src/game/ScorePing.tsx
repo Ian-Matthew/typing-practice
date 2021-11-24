@@ -4,7 +4,6 @@ import classNames from "classnames";
 export function ScorePing() {
   const { typos, completedWords } = useGameContext();
   const lastCompletedWord = completedWords[completedWords.length - 1];
-  console.log("words", completedWords);
   const hadTypo = typos.find((t) => t.expected === lastCompletedWord?.value);
 
   const pingSize = clampPing(lastCompletedWord?.value?.length || 0);
@@ -12,7 +11,7 @@ export function ScorePing() {
   return completedWords.length > 0 ? (
     <>
       <div
-        key={completedWords.length}
+        key={`ping-${completedWords.length}`}
         style={{
           zIndex: -1,
           width: pingSize,
@@ -24,7 +23,7 @@ export function ScorePing() {
       />
 
       <div
-        key={completedWords.length}
+        key={`perfect-ping-${completedWords.length}`}
         style={{
           zIndex: -2,
           width: pingSize + 50,

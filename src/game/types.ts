@@ -25,10 +25,10 @@ export interface Game {
   activeWordIndex: number;
   typos: Array<Typo>;
   inputValue: string;
-  time: number;
   started?: Date;
   activeWord?: string | null;
   completedWords?: Word[];
+  time?: number;
 }
 
 export interface GameMethods {
