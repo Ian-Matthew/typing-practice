@@ -24,7 +24,7 @@ export function ActiveGameStats() {
   const { time, words, typos } = useGameContext();
   const completedWords = getCompletedWords(words);
   const WPM = React.useMemo(
-    () => getWordsPerMinute(completedWords, time),
+    () => getWordsPerMinute(completedWords, time as number),
     [completedWords.length]
   );
   return (
@@ -37,7 +37,7 @@ export function ActiveGameStats() {
   );
 }
 
-function StatItem({ label, value }) {
+function StatItem({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex flex-row items-center justify-center px-2 space-x-1">
       <div className="font-light">{label}:</div>

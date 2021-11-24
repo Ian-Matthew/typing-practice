@@ -30,7 +30,7 @@ export function useSoundEffects() {
     // if the newValue is longer or equal to the length last value, play a sound
     // ..this is so we don't play the typo sound again when we delete a letter after a typo letter
     if (inputValue.length >= lastLength) {
-      const isMatch = letterTyped === activeWord[inputValue.length - 1];
+      const isMatch = letterTyped === activeWord?.[inputValue.length - 1];
       // On Match play the letter sound, otherwise play typo sound
       isMatch
         ? playLetter({

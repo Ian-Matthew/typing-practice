@@ -58,7 +58,7 @@ function Word() {
           "animate-typo"
       )}
     >
-      {[...activeWord].map((letter, index) => {
+      {[...(activeWord as string)].map((letter, index) => {
         const inputLetter = [...inputValue][index];
         const isClean = index > inputValue.length - 1;
         const isCorrect =

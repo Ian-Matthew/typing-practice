@@ -1,5 +1,4 @@
 import React from "react";
-import { GameBoard } from "../GameBoard";
 import { Button } from "../../Button";
 import { useGameContext } from "../useGame/GameContext";
 import { useSessionContext } from "../../session/SessionProvider";

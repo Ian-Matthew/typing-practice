@@ -3,12 +3,12 @@ import { useGameContext } from "./useGame/GameContext";
 import classNames from "classnames";
 export function ScorePing() {
   const { typos, completedWords } = useGameContext();
-  const lastCompletedWord = completedWords[completedWords.length - 1];
+  const lastCompletedWord = completedWords?.[completedWords.length - 1];
   const hadTypo = typos.find((t) => t.expected === lastCompletedWord?.value);
 
   const pingSize = clampPing(lastCompletedWord?.value?.length || 0);
 
-  return completedWords.length > 0 ? (
+  return completedWords && completedWords?.length > 0 ? (
     <>
       <div
         key={`ping-${completedWords.length}`}

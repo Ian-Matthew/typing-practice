@@ -34,11 +34,12 @@ export function useSession() {
     setIsActive(false);
   }
 
+  type RecordedGame = { words: Word[]; typos: Typo[]; time: number };
+
   function getAggregateStats() {
     const aggregateStats = session.games.reduce(
-      (stats, game) => {
-        const completedWords = getCompletedWords(game.words);
-        stats.words = [...stats.words, ...completedWords];
+      (stats: RecordedGame, game: RecordedGame) => {
+        stats.words = [...stats.words, ...game.words];
         stats.typos = [...stats.typos, ...game.typos];
         stats.time += game.time;
         return stats;

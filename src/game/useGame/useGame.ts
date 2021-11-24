@@ -72,7 +72,7 @@ export function useGame(): GameContext {
   // We can optimistically fetch the next set of words, so we start the "next" game instantly
   const [preLoadedWords, setPreLoadedWords] = React.useState<Word[]>([]);
 
-  const timer = useTimer({ pauseOffScreen: false });
+  const timer = useTimer();
 
   // Method passed to the games input
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
