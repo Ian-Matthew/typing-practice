@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 
           <div
             style={{ fontVariantLigatures: "none" }}
-            className="flex flex-col mt-auto items-center justify-center font-fancy min-h-screen"
+            className="flex flex-col mt-auto items-center justify-center font-fancy mx-auto min-h-screen"
           >
             <StartScreen />
           </div>
