@@ -1,19 +1,20 @@
 import React from "react";
-import { GameBoard } from "./game/GameBoard";
-import { Button } from "./Button";
-import { useGameContext } from "./game/GameContext";
-import { useSessionContext } from "./session/SessionProvider";
+import { GameBoard } from "../GameBoard";
+import { Button } from "../../Button";
+import { useGameContext } from "../useGame/GameContext";
+import { useSessionContext } from "../../session/SessionProvider";
 import Image from "next/image";
+import { Game } from "./Game";
 export default function StartScreen() {
-  const { preloadWords, playAgain } = useGameContext();
-  const { startSession, isActive, endSession } = useSessionContext();
+  const { readyNewGame, preloadWords } = useGameContext();
+  const { startSession, isActive } = useSessionContext();
 
   React.useEffect(() => {
     preloadWords();
   }, []);
   if (!isActive)
     return (
-      <>
+      <div className="max-w-sm flex flex-col items-center justify-center space-y-3">
         <div className="p-5">
           <Image
             blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==
@@ -29,14 +30,14 @@ export default function StartScreen() {
           <Button
             onClick={() => {
               startSession();
-              playAgain();
+              readyNewGame();
             }}
           >
             Start Practice
           </Button>
         </div>
-      </>
+      </div>
     );
 
-  return <GameBoard />;
+  return <Game />;
 }

@@ -1,10 +1,10 @@
 import type { NextPage } from "next";
 
 import React from "react";
-import { GameProvider } from "../game/GameContext";
+import { GameProvider } from "../game/useGame/GameContext";
 import { SessionProvider } from "../session/SessionProvider";
-import StartScreen from "../StartScreen";
-import { SessionStats } from "../Stats";
+import StartScreen from "../game/screens/StartScreen";
+import { SessionStats } from "../game/Stats";
 const Home: NextPage = () => {
   return (
     <SessionProvider>

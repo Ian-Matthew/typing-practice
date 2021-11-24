@@ -1,9 +1,10 @@
 import React from "react";
-import { GameState } from "../types";
+import { Game, GameMethods } from "../types";
+// todo: why cant i import just GameContext? why have to do remerge?
 import { useGame } from "./useGame";
-
+type GameContext = Game & GameMethods;
 type GameProviderProps = { children: React.ReactNode };
-export const GameContext = React.createContext<GameState | undefined>(
+export const GameContext = React.createContext<GameContext | undefined>(
   undefined
 );
 

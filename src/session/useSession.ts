@@ -3,7 +3,7 @@ import {
   getCompletedWords,
   getWordsPerMinute,
 } from "../game/game-logic-helpers";
-import { Game, Typo, Word } from "../types";
+import { Game, Typo, Word } from "../game/types";
 import { useLocalStorageState } from "../utils/useLocalStorageState";
 export function useSession() {
   const [session, setSession] = useLocalStorageState(

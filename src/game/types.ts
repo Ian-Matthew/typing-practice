@@ -21,20 +21,24 @@ export interface Stats {
 
 export interface Game {
   words: Array<Word>;
-  status: "Ready" | "Loading" | "Active" | "Over";
-  currentWordIndex: number;
+  status: "Ready" | "Loading" | "Active" | "Over" | "Paused";
+  activeWordIndex: number;
   typos: Array<Typo>;
   inputValue: string;
   time: number;
+  started?: Date;
+  activeWord?: string | null;
+  completedWords?: Word[];
 }
 
-export interface GameState extends Game {
-  activeWord: string;
-  playAgain: () => void;
+export interface GameMethods {
+  readyNewGame: () => void;
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   endGame: () => void;
   preloadWords: () => void;
 }
+
+export type GameContext = Game & GameMethods;
 
 export interface Word {
   value: string;
@@ -47,14 +51,10 @@ export type Typo = {
 };
 
 export type GameAction =
-  | { type: "READY_NEW_GAME"; words: string[] }
+  | { type: "READY_NEW_GAME"; words: Word[] }
   | { type: "END_GAME" }
-  | { type: "ADD_TYPO"; typo: string; value: string }
-  | { type: "MOVE_TO_NEXT_WORD" }
   | { type: "UPDATE_INPUT_VALUE"; inputValue: string }
-  | { type: "UPDATE_TIMER" }
-  | { type: "START_NEW_GAME"; words: string[] }
-  | { type: "PRELOAD_WORDS"; words: string[] };
+  | { type: "UPDATE_TIMER" };
 
 export interface ContextType extends Game {
   dispatch: Dispatch;

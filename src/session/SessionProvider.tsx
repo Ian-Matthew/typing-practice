@@ -1,6 +1,6 @@
 import React from "react";
 import { useSession } from "./useSession";
-import { Session } from "../types";
+import { Session } from "../game/types";
 
 const SessionContext = React.createContext<Session | undefined>(undefined);
 

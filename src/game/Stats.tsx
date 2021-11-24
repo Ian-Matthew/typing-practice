@@ -1,10 +1,7 @@
-import {
-  getCompletedWords,
-  getWordsPerMinute,
-} from "./game/game-logic-helpers";
-import { useSessionContext } from "./session/SessionProvider";
+import { getCompletedWords, getWordsPerMinute } from "./game-logic-helpers";
+import { useSessionContext } from "../session/SessionProvider";
 import React from "react";
-import { useGameContext } from "./game/GameContext";
+import { useGameContext } from "./useGame/GameContext";
 export function SessionStats({}) {
   const { getAggregateStats, resetSession } = useSessionContext();
   const stats = getAggregateStats();

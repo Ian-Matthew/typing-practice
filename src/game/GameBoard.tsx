@@ -1,9 +1,9 @@
 import React from "react";
 import classNames from "classnames";
-import { useGameContext } from "./GameContext";
-import { getCompletedWords, getCompliment } from "./game-logic-helpers";
+import { useGameContext } from "./useGame/GameContext";
+import { getCompletedWords } from "./game-logic-helpers";
 import { Button } from "../Button";
-import { ActiveGameStats } from "../Stats";
+import { ActiveGameStats } from "./Stats";
 import { useSessionContext } from "../session/SessionProvider";
 import useSound from "use-sound";
 
