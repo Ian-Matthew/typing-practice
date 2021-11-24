@@ -1,7 +1,7 @@
 import React from "react";
 import { useGameContext } from "../useGame/GameContext";
 import { ActiveGameStats } from "../Stats";
-import { Button } from "../../Button";
+import { Button } from "../../components/Button";
 export function GameOver() {
   const { readyNewGame } = useGameContext();
   return (

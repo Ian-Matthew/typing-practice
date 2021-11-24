@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "../../Button";
+import { Button } from "../../components/Button";
 import { useGameContext } from "../useGame/GameContext";
 import { useSessionContext } from "../../session/SessionProvider";
 import Image from "next/image";

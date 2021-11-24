@@ -1,6 +1,6 @@
 import React from "react";
 import { useGameContext } from "../useGame/GameContext";
-import { Button } from "../../Button";
+import { Button } from "../../components/Button";
 import { ActiveGameStats } from "../Stats";
 import { useSessionContext } from "../../session/SessionProvider";
 import { useSoundEffects } from "../useGame/useGameSounds";
