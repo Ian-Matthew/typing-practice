@@ -134,6 +134,13 @@ export function useGame(): GameContext {
     }
   }, [state.status]);
 
+  // Make sure the game ends if all words are completed
+  React.useEffect(() => {
+    if (completedWords.length === state.words.length) {
+      endGame();
+    }
+  }, [completedWords.length, state.words.length]);
+
   return {
     ...state,
     handleInputChange,
